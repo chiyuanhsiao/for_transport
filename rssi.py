@@ -32,7 +32,7 @@ def scan_3sec(verbose=False):
     filtered_rssi = None
     scan_time_start = time.time()
     miss = 0
-    while time.time() - scan_time_start <= 3:
+    while time.time() - scan_time_start <= 6:
         devices = list(scanner.scan(0.2))
         found = False
         for d in devices:
@@ -123,15 +123,15 @@ def send_tcp(topic, dist, rssi, miss):
         t = str(time.time()).split(".")[0]
         if int(t) % 4 == 0:
             break
-    #payload = f"{\"topic\": {topic}, \"time\": {t}, \"dist\": {dist}, \"rssi\": {rssi}, \"miss\": {miss}}"
-    payload = {"topic": topic, "time": t, "dist": dist, "rssi": rssi, "miss": miss}
+    payload = f"{{\"topic\": {topic}, \"time\": {t}, \"dist\": {dist}, \"rssi\": {rssi}, \"miss\": {miss}}}"
+    #payload = {"topic": topic, "time": t, "dist": dist, "rssi": rssi, "miss": miss}
     #print(payload)
-    #client_socket.send(payload.encode())
+    client_socket.send(payload.encode())
     print(json.dumps(payload))
-    client_socket.send(json.dumps(payload))
+    #client_socket.send(json.dumps(payload))
 
 host_ip = "192.168.0.181"
-port = "8787"
+port = 8787
 topic = "rssi/b"
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
