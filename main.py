@@ -243,7 +243,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         # Close connection and remove in-game anchor points on exit
         except:
             conn.close()
-            x,y,z = mc.player.getPos()
+            #x,y,z = mc.player.getPos()
             #print(x,y,z)
             #for count, i in enumerate(ap_locations_list):
                 #for j in range(-100,100):
