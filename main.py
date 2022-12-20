@@ -10,7 +10,7 @@ from scipy.optimize import minimize
 import numpy as np
 
 # Socket Settings
-HOST = '192.168.50.51'    # your IP address
+HOST = '192.168.0.181'    # your IP address
 PORT = 8787                # Port to listen for STM32 data (use ports > 1023)
 
 #from mcpi_e.minecraft import Minecraft
@@ -155,7 +155,7 @@ client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 connected = False
-client.connect(HOST, port=1883) # MQTT default port is 1833
+client.connect("broker.emqx.io", port=1883) # MQTT default port is 1833
 client.loop_start()
 while connected != True:
     print("Not Connected...")
