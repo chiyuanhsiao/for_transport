@@ -3,8 +3,8 @@ from bluepy.btle import Scanner, DefaultDelegate
 import time
 import numpy as np
 import json
+import paho.mqtt.client as mqtt
 import math
-import socket
 
 n_factor = 1
 PL_d0 = 0
@@ -105,7 +105,7 @@ def initialize():
             print("RSSI: ", default_rssi[i], " | Miss: 10")
             initial[dd] = {"rssi": default_rssi[i], "miss": 10}
             i++
-    
+
     for i in range(1, len(d)):
         nn = (initial[d[0]]["rssi"] - initial[d[i]]["rssi"]) / 10.0 / math.log10(d[i]/d[0])
         n.append(nn)
@@ -129,24 +129,12 @@ def publish_mqtt(topic, dist, rssi, miss):
     print(json.dumps(payload))
     client.publish(topic, json.dumps(payload))
 
-def send_tcp(topic, dist, rssi, miss):
-    while True:
-        t = str(time.time()).split(".")[0]
-        if int(t) % 4 == 0:
-            break
-    #payload = f"{\"topic\": {topic}, \"time\": {t}, \"dist\": {dist}, \"rssi\": {rssi}, \"miss\": {miss}}"
-    payload = {"topic": topic, "time": t, "dist": dist, "rssi": rssi, "miss": miss}
-    #print(payload)
-    #client_socket.send(payload.encode())
-    print(json.dumps(payload))
-    client_socket.send(json.dumps(payload))
+broker_ip = "broker.emqx.io"
+topic = "rssi/a"
 
-host_ip = "broker.emqx.io"
-port = "8787"
-topic = "rssi/b"
-
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect((host_ip, port))
+client = mqtt.Client()
+client.connect(broker_ip)
+client.loop_start()
 
 init = input("initialize ? (y / n) ")
 if init == "y":
@@ -170,7 +158,5 @@ while True:
         dist = pow(10.0, logdist) * d0
         print(dist)
 
-        #publish_mqtt(topic, dist, rssi, miss)
-        send_tcp(topic, dist, rssi, miss)
-        
+        publish_mqtt(topic, dist, rssi, miss)
     time.sleep(0.1)
