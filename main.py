@@ -239,6 +239,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                         #    mc.player.setRotation((new_rotate-rotate)/r_step*(step+1)+rotate)
                     
                     prev_result = new_coord
+                    send_msg = f"{{\"x_coord\": {new_coord[0]}, \"y_coord\": {new_coord[1]}}}"
+                    conn.send(send_msg.encode())
 
         # Close connection and remove in-game anchor points on exit
         except:
