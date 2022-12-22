@@ -97,7 +97,7 @@ def initialize():
             if ready == "z":
                 no_measure = 1
                 break
-        if (!no_measure):
+        if (no_measure == 0):
             rssi, miss = scan_3sec()
             print("RSSI: ", rssi, " | Miss: ", miss)
             initial[dd] = {"rssi": rssi, "miss": miss}
