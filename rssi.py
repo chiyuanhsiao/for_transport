@@ -32,7 +32,7 @@ def scan_3sec(verbose=False):
     filtered_rssi = None
     scan_time_start = time.time()
     miss = 0
-    while time.time() - scan_time_start <= 6:
+    while time.time() - scan_time_start <= 3:
         devices = list(scanner.scan(0.2))
         found = False
         for d in devices:
@@ -82,18 +82,29 @@ def scan_3sec(verbose=False):
 
 def initialize():
     print("Start initializing... ")
-    d = [1.2, 2.4, 3.6]
+    d = [1.0, 2.0, 3.0]
+    default_rssi = [-51.0, -60.0, -67.0]
     initial = {}
     n = []
+    no_measure = 0
+    i = 0
     for dd in d:
         while True:
             print(f"Please put Rpi at m = {dd}")
             ready = input("start scanning (y / n) ")
             if ready == "y":
                 break
-        rssi, miss = scan_3sec()
-        print("RSSI: ", rssi, " | Miss: ", miss)
-        initial[dd] = {"rssi": rssi, "miss": miss}
+            if ready == "z":
+                no_measure = 1
+                break
+        if (!no_measure):
+            rssi, miss = scan_3sec()
+            print("RSSI: ", rssi, " | Miss: ", miss)
+            initial[dd] = {"rssi": rssi, "miss": miss}
+        else:
+            print("RSSI: ", default_rssi[i], " | Miss: 10")
+            initial[dd] = {"rssi": default_rssi[i], "miss": 10}
+            i++
     
     for i in range(1, len(d)):
         nn = (initial[d[0]]["rssi"] - initial[d[i]]["rssi"]) / 10.0 / math.log10(d[i]/d[0])
@@ -123,15 +134,15 @@ def send_tcp(topic, dist, rssi, miss):
         t = str(time.time()).split(".")[0]
         if int(t) % 4 == 0:
             break
-    payload = f"{{\"topic\": {topic}, \"time\": {t}, \"dist\": {dist}, \"rssi\": {rssi}, \"miss\": {miss}}}"
-    #payload = {"topic": topic, "time": t, "dist": dist, "rssi": rssi, "miss": miss}
+    #payload = f"{\"topic\": {topic}, \"time\": {t}, \"dist\": {dist}, \"rssi\": {rssi}, \"miss\": {miss}}"
+    payload = {"topic": topic, "time": t, "dist": dist, "rssi": rssi, "miss": miss}
     #print(payload)
-    client_socket.send(payload.encode())
+    #client_socket.send(payload.encode())
     print(json.dumps(payload))
-    #client_socket.send(json.dumps(payload))
+    client_socket.send(json.dumps(payload))
 
-host_ip = "192.168.0.181"
-port = 8787
+host_ip = "broker.emqx.io"
+port = "8787"
 topic = "rssi/b"
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
