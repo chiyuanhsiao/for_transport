@@ -11,6 +11,7 @@ client_socket.connect((host_ip, port))
 
 x_coord = []
 y_coord = []
+ap_locations_list = [[0.1,0], [4,0], [0,2.5], [4,2.5]]
 
 plt.ion()
 fig = plt.figure(figsize=(3,3))
@@ -29,6 +30,8 @@ while True:
     x_coord = x_coord[-20:]
     y_coord = y_coord[-20:]
     fig.clear()
-    plt.plot(x_coord, y_coord)
+    for i in len(ap_locations_list):
+        plt.plot(ap_locations_list[i][0], ap_locations_list[i][1], 'b')
+    plt.plot(x_coord, y_coord, 'r')
     plt.show()
     plt.pause(0.0001)
