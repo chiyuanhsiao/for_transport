@@ -104,7 +104,7 @@ def initialize():
         else:
             print("RSSI: ", default_rssi[i], " | Miss: 10")
             initial[dd] = {"rssi": default_rssi[i], "miss": 10}
-            i++
+            i += 1
 
     for i in range(1, len(d)):
         nn = (initial[d[0]]["rssi"] - initial[d[i]]["rssi"]) / 10.0 / math.log10(d[i]/d[0])
